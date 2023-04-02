@@ -25,12 +25,12 @@ public class CurrencyGenerator : MonoBehaviour
     System.Random rand = new System.Random();
     // Keep track of the time elapsed since last currency generation
     private float generationDT = 0;
-    // List which stays updated with all Characters inside of this Trigger
-    private List<Character> charactersInside = new List<Character>();
+    // List which stays updated with all character Inventories inside of this Trigger
+    private List<Inventory> inventoriesInside = new List<Inventory>();
 
-    void GiveCurrencyToCharacter(Character character, int amt)
+    void TransferCurrency(Inventory inv, int amt)
     {
-        character.AddCurrency(currencyType, amt);
+        inv.AddCurrency(currencyType, amt);
     }
 
     bool TryGenerateCurrency()
@@ -39,9 +39,9 @@ public class CurrencyGenerator : MonoBehaviour
         {
             return false;
         }
-        if (charactersInside.Count > 0)
+        if (inventoriesInside.Count > 0)
         {
-            GiveCurrencyToCharacter(charactersInside[rand.Next(charactersInside.Count)], 1);
+            TransferCurrency(inventoriesInside[rand.Next(inventoriesInside.Count)], 1);
         } else
         {
             accumulatedCount++;
@@ -62,13 +62,13 @@ public class CurrencyGenerator : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        Character character = other.gameObject.GetComponent<Character>();
-        if (character && !charactersInside.Contains(character))
+        Inventory inv = other.gameObject.GetComponent<Inventory>();
+        if (inv && !inventoriesInside.Contains(inv))
         {
-            charactersInside.Add(character);
+            inventoriesInside.Add(inv);
             if (accumulatedCount > 0)
             {
-                GiveCurrencyToCharacter(character, accumulatedCount);
+                TransferCurrency(inv, accumulatedCount);
                 accumulatedCount = 0;
             }
         }
@@ -76,10 +76,10 @@ public class CurrencyGenerator : MonoBehaviour
     
     void OnTriggerExit(Collider other)
     {
-        Character character = other.gameObject.GetComponent<Character>();
-        if (character && charactersInside.Contains(character))
+        Inventory inv = other.gameObject.GetComponent<Inventory>();
+        if (inv && inventoriesInside.Contains(inv))
         {
-            charactersInside.Remove(character);
+            inventoriesInside.Remove(inv);
         }
     }
 }
