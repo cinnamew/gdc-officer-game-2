@@ -5,18 +5,16 @@ using UnityEngine.InputSystem;
 
 public class Character : MonoBehaviour
 {
-    // Reference to the player this character is being controlled by
-    public Player owner;
     // Reference to camera transform
     [SerializeField]
-    Transform cameraTransform;
+    public Transform cameraTransform;
 
     new Rigidbody rigidbody;
 
     float walkSpeed = 5.0f;
     float turnSpeed = 10.0f;
 
-    Vector3 moveDir = Vector3.zero;
+    Vector3 inputDir = Vector3.zero;
     Vector2 lookAngle = Vector2.zero; // note: x is horizontal / yaw, y is vertical / pitch, contrary to unity euler angles convention
 
     const float MIN_PITCH = -85.0f;
@@ -31,6 +29,10 @@ public class Character : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        Vector3 moveDir = transform.TransformVector(inputDir); // transform the relative input direction to world space
+        moveDir.y = 0; // shouldnt be necessary as long as the character doesn't rotate pitch-wise anyway but just incase
+        moveDir.Normalize();
+
         rigidbody.velocity = moveDir * walkSpeed + rigidbody.velocity.y * Vector3.up;
         cameraTransform.localRotation = Quaternion.Euler(lookAngle.y, 0, 0);
         transform.rotation = Quaternion.Euler(0, lookAngle.x, 0);
@@ -39,11 +41,8 @@ public class Character : MonoBehaviour
     // note: this component is attached to the same transform/gameobject as the character hitbox
     public void OnMove(InputAction.CallbackContext context)
     {
-        Vector2 inputDir = context.ReadValue<Vector2>();
-        moveDir = new Vector3(inputDir.x, 0, inputDir.y);
-        moveDir = transform.TransformVector(moveDir); // make it relative to how we are already turned
-        moveDir.y = 0; // shouldnt be necessary as long as the character doesn't rotate pitch-wise anyway but just incase
-        moveDir.Normalize();
+        Vector2 inputDir2D = context.ReadValue<Vector2>();
+        inputDir = new Vector3(inputDir2D.x, 0, inputDir2D.y);
     }
 
     public void OnTurn(InputAction.CallbackContext context)

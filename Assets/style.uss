@@ -1,0 +1,3 @@
+.text_light {
+    color: rgb(210, 210, 210);
+}
