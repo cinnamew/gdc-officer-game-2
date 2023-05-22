@@ -1,0 +1,15 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <ui:Template name="HotbarItem" src="project://database/Assets/HotbarItem.uxml?fileID=9197481963319205126&amp;guid=00d6eb378d92d7844aca09720eef117d&amp;type=3#HotbarItem" />
+    <Style src="project://database/Assets/style.uss?fileID=7433441132597879392&amp;guid=e6a1a0c8b7f47784986107a741ed96ff&amp;type=3#style" />
+    <ui:VisualElement name="Hotbar" style="left: 0; right: 0; bottom: 10px; position: absolute; height: 100px; flex-direction: row; justify-content: center;">
+        <ui:Instance template="HotbarItem" name="HotbarItem" />
+        <ui:VisualElement name="CurrencyReadouts">
+            <ui:VisualElement style="height: 50%; width: 100%; flex-direction: row;">
+                <ui:Label text="99" display-tooltip-when-elided="true" style="height: 100%; justify-content: flex-start; -unity-text-align: middle-left; font-size: 24px;" />
+                <ui:VisualElement style="background-image: url(&apos;project://database/Assets/UI%20Toolkit/UnityThemes/UnityDefaultRuntimeTheme.tss?fileID=-1304905567622442630&amp;guid=e093473d4ce489b46b33089b634a6a81&amp;type=3#arrow-down@2x&apos;); width: 48px; height: 48px; background-color: rgba(0, 0, 0, 255);" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+    <ui:Label text="Press [] to purchase for []" display-tooltip-when-elided="true" name="InteractionTooltip" class="text_light" style="position: absolute; left: 0; top: 50%; right: 0; bottom: 40%; -unity-text-align: upper-center; -unity-font-style: bold; -unity-text-outline-width: 1px; font-size: 24px;" />
+    <ui:VisualElement style="bottom: 120px; position: absolute; left: 30%; right: 30%; height: 30px;" />
+</ui:UXML>

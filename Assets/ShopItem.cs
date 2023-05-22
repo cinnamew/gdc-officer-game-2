@@ -3,24 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 
-[System.Serializable]
-public class CurrencyAmountPair
-{
-    [SerializeField]
-    CurrencyType currencyType;
-    [SerializeField]
-    int amount;
-
-    public override string ToString()
-    {
-        return amount.ToString() + " " + currencyType.ToString();
-    }
-}
-
 public class ShopItem : MonoBehaviour
 {
     [SerializeField]
     public List<CurrencyAmountPair> costs;
+
+    [SerializeField]
+    GameObject itemToPurchase;
 
     Interaction interaction;
 
@@ -35,6 +24,10 @@ public class ShopItem : MonoBehaviour
 
     void AttemptPurchase(Player player)
     {
-
+        if (player.inventory.TryTakeCurrencies(costs))
+        {
+            GameObject item = Instantiate(itemToPurchase);
+            player.inventory.items.Add(item);
+        }
     }
 }

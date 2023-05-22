@@ -7,6 +7,18 @@ public enum CurrencyType
     Premium
 }
 
+[System.Serializable]
+public class CurrencyAmountPair
+{
+    public CurrencyType currencyType;
+    public int amount;
+
+    public override string ToString()
+    {
+        return amount.ToString() + " " + currencyType.ToString();
+    }
+}
+
 public class CurrencyGenerator : MonoBehaviour
 {
     // Maximum amount of currency this generator can accumulate

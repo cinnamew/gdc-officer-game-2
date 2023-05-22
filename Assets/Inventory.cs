@@ -5,9 +5,9 @@ using UnityEngine;
 public class Inventory : MonoBehaviour
 {
     // Keep track of how much currency the character is holding
-    Dictionary<CurrencyType, int> currenciesHeld;
+    public Dictionary<CurrencyType, int> currenciesHeld;
     // List of items
-    List<GameObject> items;
+    public List<GameObject> items;
 
     private void Start()
     {
@@ -21,5 +21,23 @@ public class Inventory : MonoBehaviour
     public void AddCurrency(CurrencyType currencyType, int amt)
     {
         currenciesHeld[currencyType] += amt;
+    }
+
+    public bool TryTakeCurrencies(List<CurrencyAmountPair> toTake)
+    {
+        foreach (CurrencyAmountPair pair in toTake)
+        {
+            if (currenciesHeld[pair.currencyType] < pair.amount)
+            {
+                return false;
+            }
+        }
+
+        // we have enough of each currency
+        foreach (CurrencyAmountPair pair in toTake)
+        {
+            currenciesHeld[pair.currencyType] -= pair.amount;
+        }
+        return true;
     }
 }

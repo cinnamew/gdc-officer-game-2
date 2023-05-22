@@ -5,6 +5,7 @@ using UnityEngine;
 public class Player : MonoBehaviour
 {
     public Character character;
+    public Inventory inventory;
     public UIManager ui;
 
     // Start is called before the first frame update
@@ -44,6 +45,11 @@ public class Player : MonoBehaviour
             {
                 ui.UpdateInteractionTooltip(interaction.InteractionText);
             }
+        }
+        if (inventory != null)
+        {
+            ui.UpdateCurrency(inventory.currenciesHeld);
+            ui.UpdateHotbar(inventory.items);
         }
     }
 }
