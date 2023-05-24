@@ -9,7 +9,6 @@ public class Player : MonoBehaviour
     public Character character;
     public Inventory inventory;
     public UIManager ui;
-    private int hitPoints = 3;
 
     public List<InputAction> hotbarBindings;
 
@@ -83,13 +82,5 @@ public class Player : MonoBehaviour
             ui.UpdateCurrency(inventory.currenciesHeld);
             ui.UpdateHotbar(inventory.items, character.equippedItem);
         }
-    }
-
-    public int getHitPoints() {
-        return hitPoints;
-    }
-
-    public void setHitPoints(int newHp) {
-        hitPoints = newHp;
     }
 }
