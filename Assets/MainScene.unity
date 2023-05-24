@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657874, g: 0.49641275, b: 0.5748172, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657826, g: 0.49641263, b: 0.57481676, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -379,8 +379,8 @@ MonoBehaviour:
     m_ActionName: Player/Interact[/Keyboard/f]
   - m_PersistentCalls:
       m_Calls: []
-    m_ActionId: 58f3215a-4032-44ec-b8dc-3623e76875d9
-    m_ActionName: Item/PrimaryUse[/Mouse/leftButton]
+    m_ActionId: c7295185-fb9b-4936-94ea-521f6a923b49
+    m_ActionName: Items/PrimaryUse[/Mouse/leftButton]
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player
@@ -934,7 +934,7 @@ GameObject:
   - component: {fileID: 1247706516}
   - component: {fileID: 1247706517}
   - component: {fileID: 1247706518}
-  m_Layer: 2
+  m_Layer: 0
   m_Name: Character
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1115,21 +1115,9 @@ MonoBehaviour:
     m_ActionId: 08747504-97f5-4d3a-b123-aeb12689ecad
     m_ActionName: Player/Interact[/Keyboard/f]
   - m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1247706511}
-        m_TargetAssemblyTypeName: Character, Assembly-CSharp
-        m_MethodName: OnItemPrimaryUse
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-    m_ActionId: 8f62a608-fb74-40dc-bad3-90062e4eed4f
-    m_ActionName: Character/ItemPrimaryUse[/Mouse/leftButton]
+      m_Calls: []
+    m_ActionId: c7295185-fb9b-4936-94ea-521f6a923b49
+    m_ActionName: Items/PrimaryUse[/Mouse/leftButton]
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Character
@@ -1341,7 +1329,7 @@ GameObject:
   - component: {fileID: 1490536090}
   - component: {fileID: 1490536092}
   - component: {fileID: 1490536091}
-  m_Layer: 2
+  m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
   m_Icon: {fileID: 0}
@@ -1657,7 +1645,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: ef9739804148d6a42a5f018cfb0be241, type: 2}
+  - {fileID: 2100000, guid: 85d1ef950f171a94c9b9ef8d4489d6eb, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1824,7 +1812,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1928247540}
-  m_Layer: 2
+  m_Layer: 0
   m_Name: ArmEquip
   m_TagString: Untagged
   m_Icon: {fileID: 0}

@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class Bow : MonoBehaviour
 {
@@ -14,15 +15,12 @@ public class Bow : MonoBehaviour
         item = GetComponent<Item>();
     }
 
-    void Update()
+    public void OnPrimaryUse(InputAction.CallbackContext context)
     {
-        
-    }
-
-    public void PrimaryUse()
-    {
-        GameObject arrow = Instantiate(arrowAsset, item.owner.cameraTransform.position, Quaternion.identity); // rotation will be set by arrow component anyway
-        Arrow arrowComp = arrow.GetComponent<Arrow>();
-        arrowComp.velocity = item.owner.cameraTransform.forward * arrowLaunchSpeed;
+        if (context.phase == InputActionPhase.Started) {
+            GameObject arrow = Instantiate(arrowAsset, item.owner.cameraTransform.position, Quaternion.identity); // rotation will be set by arrow component anyway
+            Arrow arrowComp = arrow.GetComponent<Arrow>();
+            arrowComp.velocity = item.owner.cameraTransform.forward * arrowLaunchSpeed;
+        }
     }
 }

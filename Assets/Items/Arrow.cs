@@ -14,10 +14,8 @@ public class Arrow : MonoBehaviour
         Vector3 displacement = velocity * Time.deltaTime;
         Vector3 newPos = transform.position + displacement;
         RaycastHit hit;
-        Debug.DrawRay(transform.position, displacement);
-        if (Physics.Raycast(transform.position, displacement, out hit)) {
+        if (Physics.Raycast(transform.position, displacement.normalized, out hit, displacement.magnitude)) {
             GameObject hitObj = hit.collider.gameObject;
-            print(hitObj.name);
 
             Health health = hitObj.GetComponent<Health>();
             if (health != null)
@@ -32,5 +30,6 @@ public class Arrow : MonoBehaviour
         }
         transform.LookAt(newPos);
         transform.position = newPos;
+
     }
 }

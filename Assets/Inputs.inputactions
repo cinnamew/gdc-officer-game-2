@@ -22,15 +22,6 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": true
-                },
-                {
-                    "name": "ItemPrimaryUse",
-                    "type": "Button",
-                    "id": "8f62a608-fb74-40dc-bad3-90062e4eed4f",
-                    "expectedControlType": "Button",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -90,6 +81,17 @@
                     "isPartOfComposite": true
                 },
                 {
+                    "name": "2D Vector",
+                    "id": "d98510d4-9e87-49cd-b04d-2ca3c282e7df",
+                    "path": "2DVector",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Move",
+                    "isComposite": true,
+                    "isPartOfComposite": false
+                },
+                {
                     "name": "",
                     "id": "6fd3f13b-6dfa-43b4-9003-81e859df28f9",
                     "path": "<Mouse>/delta",
@@ -101,14 +103,14 @@
                     "isPartOfComposite": false
                 },
                 {
-                    "name": "",
-                    "id": "5cec8323-46c3-44a0-aa36-b6fb63b9c85b",
-                    "path": "<Mouse>/leftButton",
+                    "name": "2D Vector",
+                    "id": "4bcdb032-15fa-4f33-9373-e69cbaecfa99",
+                    "path": "2DVector",
                     "interactions": "",
                     "processors": "",
-                    "groups": "KeyboardMouse",
-                    "action": "ItemPrimaryUse",
-                    "isComposite": false,
+                    "groups": "",
+                    "action": "Turn",
+                    "isComposite": true,
                     "isPartOfComposite": false
                 }
             ]
@@ -136,6 +138,34 @@
                     "processors": "",
                     "groups": "KeyboardMouse",
                     "action": "Interact",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        },
+        {
+            "name": "Items",
+            "id": "3851ca46-0cd3-462b-82a9-37462fb173c2",
+            "actions": [
+                {
+                    "name": "PrimaryUse",
+                    "type": "Button",
+                    "id": "c7295185-fb9b-4936-94ea-521f6a923b49",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "0532a13a-dc79-4dd9-a0c0-3538b098abfd",
+                    "path": "<Mouse>/leftButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "KeyboardMouse",
+                    "action": "PrimaryUse",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

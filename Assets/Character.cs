@@ -56,15 +56,7 @@ public class Character : MonoBehaviour
         lookAngle.y = Mathf.Clamp(lookAngle.y - turnDir.y * Time.deltaTime * turnSpeed, MIN_PITCH, MAX_PITCH);
     }
 
-    public void OnItemPrimaryUse(InputAction.CallbackContext context)
-    {
-        if (equippedItem)
-        {
-            equippedItem.SendMessage("PrimaryUse");
-        }
-    }
-
-    void UnequipItem() {
+    public void UnequipItem() {
         equippedItem.SetActive(false);
         equippedItem = null;
     }
