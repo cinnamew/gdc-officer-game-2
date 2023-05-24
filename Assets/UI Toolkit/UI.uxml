@@ -1,0 +1,22 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <ui:Template name="HotbarItem" src="project://database/Assets/UI%20Toolkit/HotbarItem.uxml?fileID=9197481963319205126&amp;guid=00d6eb378d92d7844aca09720eef117d&amp;type=3#HotbarItem" />
+    <Style src="project://database/Assets/UI%20Toolkit/style.uss?fileID=7433441132597879392&amp;guid=e6a1a0c8b7f47784986107a741ed96ff&amp;type=3#style" />
+    <ui:VisualElement name="Hotbar" style="left: 0; right: 0; bottom: 10px; position: absolute; height: 100px; flex-direction: row; justify-content: center;">
+        <ui:VisualElement name="spacer" style="flex-grow: 1;" />
+        <ui:Instance template="HotbarItem" name="HotbarItem" />
+        <ui:VisualElement name="CurrencyReadouts" style="flex-basis: 0; flex-grow: 1;">
+            <ui:VisualElement name="CurrencyRegular" style="height: 50%; width: 100%; flex-direction: row; align-items: center;">
+                <ui:VisualElement style="background-image: url(&apos;project://database/Assets/UI%20Toolkit/currency_icon.png?fileID=2800000&amp;guid=7e2459b8a27a6a54d88795e6c39dd3cd&amp;type=3#currency_icon&apos;); width: 32px; height: 32px; background-color: rgba(0, 0, 0, 0);" />
+                <ui:Label text="99" display-tooltip-when-elided="true" class="text_light" style="height: 100%; justify-content: flex-start; -unity-text-align: middle-left; font-size: 24px; padding-left: 3px;" />
+            </ui:VisualElement>
+            <ui:VisualElement name="CurrencyPremium" style="height: 50%; width: 100%; flex-direction: row; align-items: center;">
+                <ui:VisualElement style="background-image: url(&apos;project://database/Assets/UI%20Toolkit/currency_icon.png?fileID=2800000&amp;guid=7e2459b8a27a6a54d88795e6c39dd3cd&amp;type=3#currency_icon&apos;); width: 32px; height: 32px; background-color: rgba(0, 0, 0, 0); -unity-background-image-tint-color: rgb(192, 139, 0);" />
+                <ui:Label text="999999" display-tooltip-when-elided="true" class="text_light" style="height: 100%; justify-content: flex-start; -unity-text-align: middle-left; font-size: 24px; padding-left: 3px;" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+    <ui:Label text="Press [] to purchase for []" display-tooltip-when-elided="true" name="InteractionTooltip" class="text_light" style="position: absolute; left: 0; top: 50%; right: 0; bottom: 40%; -unity-text-align: upper-center; -unity-font-style: bold; -unity-text-outline-width: 1px; font-size: 24px;" />
+    <ui:VisualElement name="Healthbar" class="bg_dark" style="bottom: 120px; position: absolute; left: 30%; right: 30%; height: 30px; border-left-width: 5px; border-right-width: 5px; border-top-width: 5px; border-bottom-width: 5px; border-top-left-radius: 10px; border-bottom-left-radius: 10px; border-top-right-radius: 10px; border-bottom-right-radius: 10px;">
+        <ui:VisualElement name="HealthbarHealth" style="height: 100%; width: 50%; background-color: rgb(155, 255, 145); border-top-left-radius: 5px; border-bottom-left-radius: 5px; border-top-right-radius: 5px; border-bottom-right-radius: 5px; transition-property: width, background-color; transition-duration: 0.2s, 0.2s; transition-timing-function: linear, linear; transition-delay: 0s, 0s;" />
+    </ui:VisualElement>
+</ui:UXML>

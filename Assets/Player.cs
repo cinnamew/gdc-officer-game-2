@@ -1,6 +1,8 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class Player : MonoBehaviour
 {
@@ -8,11 +10,29 @@ public class Player : MonoBehaviour
     public Inventory inventory;
     public UIManager ui;
 
+    public List<InputAction> hotbarBindings;
+
     // Start is called before the first frame update
     void Start()
     {
-
+        for (int i = 1; i <= 9; ++i) {
+            InputAction action = new InputAction("Slot" + i, InputActionType.Button, "<Keyboard>/" + i);
+            action.performed += TryEquip;
+            action.Enable();
+            hotbarBindings.Add(action);
+        }
         Cursor.lockState = CursorLockMode.Locked;
+    }
+
+    private void TryEquip(InputAction.CallbackContext context)
+    {
+        int slot = Int32.Parse(context.action.name.Substring(4));
+        if (inventory != null) {
+            GameObject item = inventory.items[slot-1];
+            if (item != null) {
+                character.EquipItem(item);
+            }
+        }
     }
 
     Interaction CheckInteraction(Transform camera)
@@ -31,6 +51,16 @@ public class Player : MonoBehaviour
         return interaction;
     }
 
+    public void OnInteract(InputAction.CallbackContext context) {
+        if (context.phase != InputActionPhase.Canceled) {
+            return;
+        }
+        Interaction interaction = CheckInteraction(character.cameraTransform);
+        if (interaction) {
+            interaction.interacted.Invoke(this);
+        }
+    }
+
     // Update is called once per frame
     void Update()
     {
@@ -45,11 +75,12 @@ public class Player : MonoBehaviour
             {
                 ui.UpdateInteractionTooltip(interaction.InteractionText);
             }
+            ui.UpdateHealth(character.GetComponent<Health>().health);
         }
         if (inventory != null)
         {
             ui.UpdateCurrency(inventory.currenciesHeld);
-            ui.UpdateHotbar(inventory.items);
+            ui.UpdateHotbar(inventory.items, character.equippedItem);
         }
     }
 }

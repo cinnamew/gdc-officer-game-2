@@ -22,15 +22,6 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": true
-                },
-                {
-                    "name": "Interact",
-                    "type": "Button",
-                    "id": "b9b9e114-f519-4ede-8912-641ad12ffde2",
-                    "expectedControlType": "Button",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -99,10 +90,27 @@
                     "action": "Turn",
                     "isComposite": false,
                     "isPartOfComposite": false
-                },
+                }
+            ]
+        },
+        {
+            "name": "Player",
+            "id": "ae75d7fd-f1f4-4d14-815d-f4e5a1ea529c",
+            "actions": [
+                {
+                    "name": "Interact",
+                    "type": "Button",
+                    "id": "08747504-97f5-4d3a-b123-aeb12689ecad",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
                 {
                     "name": "",
-                    "id": "ed222d10-f3ce-4b3c-ac73-2b382a5fdd65",
+                    "id": "4fa46cac-1415-4dd6-849f-21fdd16c80e1",
                     "path": "<Keyboard>/f",
                     "interactions": "",
                     "processors": "",

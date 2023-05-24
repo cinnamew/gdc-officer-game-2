@@ -12,6 +12,7 @@ public class Inventory : MonoBehaviour
     private void Start()
     {
         currenciesHeld = new Dictionary<CurrencyType, int>();
+        items = new List<GameObject>();
         foreach (int i in System.Enum.GetValues(typeof(CurrencyType)))
         {
             currenciesHeld.Add((CurrencyType)i, 0);

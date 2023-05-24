@@ -9,6 +9,10 @@ public class Character : MonoBehaviour
     [SerializeField]
     public Transform cameraTransform;
 
+    [SerializeField]
+    Transform equipTransform;
+    public GameObject equippedItem = null;
+
     new Rigidbody rigidbody;
 
     float walkSpeed = 5.0f;
@@ -50,5 +54,26 @@ public class Character : MonoBehaviour
         Vector2 turnDir = context.ReadValue<Vector2>();
         lookAngle.x = (lookAngle.x + turnDir.x * Time.deltaTime * turnSpeed) % 360.0f;
         lookAngle.y = Mathf.Clamp(lookAngle.y - turnDir.y * Time.deltaTime * turnSpeed, MIN_PITCH, MAX_PITCH);
+    }
+
+    void UnequipItem() {
+        equippedItem.SetActive(false);
+        equippedItem = null;
+    }
+
+    public void EquipItem(GameObject item) {
+        GameObject prevEquipped = equippedItem;
+        if (equippedItem) {
+            UnequipItem();
+            if (item == prevEquipped) {
+                // allows unequipping of everything
+                return;
+            }
+        }
+        Item itemComp = item.GetComponent<Item>();
+        item.transform.SetParent(equipTransform, false);
+        itemComp.owner = this;
+        item.SetActive(true);
+        equippedItem = item;
     }
 }
