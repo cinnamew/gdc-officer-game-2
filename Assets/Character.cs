@@ -56,7 +56,7 @@ public class Character : MonoBehaviour
         lookAngle.y = Mathf.Clamp(lookAngle.y - turnDir.y * Time.deltaTime * turnSpeed, MIN_PITCH, MAX_PITCH);
     }
 
-    void UnequipItem() {
+    public void UnequipItem() {
         equippedItem.SetActive(false);
         equippedItem = null;
     }

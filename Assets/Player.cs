@@ -40,7 +40,7 @@ public class Player : MonoBehaviour
     {
         RaycastHit hit;
         Interaction interaction = null;
-        if (Physics.Raycast(camera.position, camera.TransformDirection(Vector3.forward), out hit, Mathf.Infinity))
+        if (Physics.Raycast(camera.position, camera.TransformDirection(Vector3.forward), out hit, 2.0f))
         {
             // this is kind of scuffed but just go up the hierarchy looking for an interaction, so we can have one interaction component cover a range of gameobjects
             Transform hitTransform = hit.transform;

@@ -10,11 +10,12 @@ public class Health : MonoBehaviour
     float regenDelay = 5.0f; // delay before this object can begin regenerating its health
     float regenRate = 0.05f; // health regenerated each second 
     
+    public float armor = 0.0f;
     float lastDamaged = 0.0f;
     bool dead = false;
 
     public void TakeDamage(float delta) {
-        health = Mathf.Max(health - delta, 0.0f);
+        health = Mathf.Max(health - delta * (1.0f - armor), 0.0f);
         lastDamaged = Time.time;
 
         if (health == 0.0f && !dead) {
