@@ -58,8 +58,8 @@ public class UIManager : MonoBehaviour
                 respectiveHotbarElem.Q<VisualElement>("Image").style.backgroundImage = thumbnail;
             }
 
-            //Object.Destroy(renderClone);
-            //renderClone = null;
+            Object.Destroy(renderClone);
+            renderClone = null;
             beingRendered = null;
         }
     }
