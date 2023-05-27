@@ -79,7 +79,7 @@ public class UIManager : MonoBehaviour
         }
         GameObject item;
         if (itemsToRender.TryDequeue(out item)) {
-            renderClone = Object.Instantiate(item, Vector3.zero, Quaternion.identity);
+            renderClone = Object.Instantiate(item.GetComponent<Item>().visualObj, Vector3.zero, Quaternion.identity);
             SetLayerRecursively(renderClone, LayerMask.NameToLayer("ThumbnailRender"));
             beingRendered = item;
 
@@ -98,13 +98,13 @@ public class UIManager : MonoBehaviour
         interactTooltip.text = "";
     }
 
-    public void UpdateCurrency(Dictionary<CurrencyType, int> amounts)
+    public void UpdateCurrency(IDictionary<CurrencyType, int> amounts)
     {
         currencyRegular.text = amounts[CurrencyType.Regular].ToString();
         currencyPremium.text = amounts[CurrencyType.Premium].ToString();
     }
 
-    public void UpdateHotbar(List<GameObject> items, GameObject equippedItem)
+    public void UpdateHotbar(IList<GameObject> items, GameObject equippedItem)
     {
         foreach (GameObject item in items)
         {

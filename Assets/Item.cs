@@ -5,4 +5,5 @@ using UnityEngine;
 public class Item : MonoBehaviour
 {
     public Character owner;
+    public GameObject visualObj;
 }

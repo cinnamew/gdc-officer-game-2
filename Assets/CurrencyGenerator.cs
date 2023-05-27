@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Mirror;
 public enum CurrencyType
 {
     Regular,
@@ -19,7 +20,8 @@ public class CurrencyAmountPair
     }
 }
 
-public class CurrencyGenerator : MonoBehaviour
+public class CurrencyGenerator : NetworkBehaviour
+// just using NetworkBehaviour to make sure we're on the server. may be better to initialize only on server instead but keep as a regular monobehaviour
 {
     // Maximum amount of currency this generator can accumulate
     [SerializeField]
@@ -63,6 +65,7 @@ public class CurrencyGenerator : MonoBehaviour
 
     void Update()
     {
+        if (!isServer) return;
         generationDT += Time.deltaTime;
         while (generationDT > SPAWN_DELAY)
         {
@@ -74,6 +77,7 @@ public class CurrencyGenerator : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
+        if (!isServer) return;
         Inventory inv = other.gameObject.GetComponent<Inventory>();
         if (inv && !inventoriesInside.Contains(inv))
         {
@@ -88,6 +92,7 @@ public class CurrencyGenerator : MonoBehaviour
     
     void OnTriggerExit(Collider other)
     {
+        if (!isServer) return;
         Inventory inv = other.gameObject.GetComponent<Inventory>();
         if (inv && inventoriesInside.Contains(inv))
         {

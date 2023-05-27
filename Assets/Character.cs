@@ -2,8 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using Mirror;
 
-public class Character : MonoBehaviour
+public class Character : NetworkBehaviour
 {
     // Reference to camera transform
     [SerializeField]
@@ -11,7 +12,7 @@ public class Character : MonoBehaviour
 
     [SerializeField]
     Transform equipTransform;
-    public GameObject equippedItem = null;
+    [SyncVar(hook = nameof(OnEquippedChanged))] public GameObject equippedItem = null;
 
     new Rigidbody rigidbody;
 
@@ -28,6 +29,9 @@ public class Character : MonoBehaviour
     void Start()
     {
         rigidbody = GetComponent<Rigidbody>();
+        if (!isLocalPlayer) {
+            cameraTransform.gameObject.SetActive(false);
+        }
     }
 
     // Update is called once per frame
@@ -43,24 +47,29 @@ public class Character : MonoBehaviour
     }
 
     // note: this component is attached to the same transform/gameobject as the character hitbox
+    [Client]
     public void OnMove(InputAction.CallbackContext context)
     {
+        if (!isLocalPlayer) return;
         Vector2 inputDir2D = context.ReadValue<Vector2>();
         inputDir = new Vector3(inputDir2D.x, 0, inputDir2D.y);
     }
 
+    [Client]
     public void OnTurn(InputAction.CallbackContext context)
     {
+        if (!isLocalPlayer) return;
         Vector2 turnDir = context.ReadValue<Vector2>();
         lookAngle.x = (lookAngle.x + turnDir.x * Time.deltaTime * turnSpeed) % 360.0f;
         lookAngle.y = Mathf.Clamp(lookAngle.y - turnDir.y * Time.deltaTime * turnSpeed, MIN_PITCH, MAX_PITCH);
     }
 
+    [Server]
     public void UnequipItem() {
-        equippedItem.SetActive(false);
         equippedItem = null;
     }
 
+    [Command]
     public void EquipItem(GameObject item) {
         GameObject prevEquipped = equippedItem;
         if (equippedItem) {
@@ -70,10 +79,28 @@ public class Character : MonoBehaviour
                 return;
             }
         }
-        Item itemComp = item.GetComponent<Item>();
-        item.transform.SetParent(equipTransform, false);
-        itemComp.owner = this;
-        item.SetActive(true);
         equippedItem = item;
+        item.GetComponent<NetworkIdentity>().AssignClientAuthority(GetComponent<Player>().connectionToClient);
+    }
+
+    void OnEquippedChanged(GameObject oldEquipped, GameObject newEquipped) {
+        if (oldEquipped != null) {
+            oldEquipped.SetActive(false);
+        }
+        if (newEquipped != null) {
+            newEquipped.SetActive(true);
+
+            newEquipped.transform.SetParent(equipTransform, false);
+
+            Item itemComp = newEquipped.GetComponent<Item>();
+            itemComp.owner = this;
+            if (!isLocalPlayer) {
+                // prevent our player from trying to perform input on items that arent ours
+                PlayerInput input = newEquipped.GetComponent<PlayerInput>();
+                if (input != null) {
+                    input.enabled = false;
+                }
+            }
+        }
     }
 }

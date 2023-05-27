@@ -1,18 +1,18 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Mirror;
 
-public class Inventory : MonoBehaviour
+public class Inventory : NetworkBehaviour
 {
     // Keep track of how much currency the character is holding
-    public Dictionary<CurrencyType, int> currenciesHeld;
+    public readonly SyncDictionary<CurrencyType, int> currenciesHeld = new SyncDictionary<CurrencyType, int>();
     // List of items
-    public List<GameObject> items;
+    public readonly SyncList<GameObject> items = new SyncList<GameObject>();
 
     private void Start()
     {
-        currenciesHeld = new Dictionary<CurrencyType, int>();
-        items = new List<GameObject>();
+        if (!isServer) return;
         foreach (int i in System.Enum.GetValues(typeof(CurrencyType)))
         {
             currenciesHeld.Add((CurrencyType)i, 0);
@@ -24,7 +24,7 @@ public class Inventory : MonoBehaviour
         currenciesHeld[currencyType] += amt;
     }
 
-    public bool TryTakeCurrencies(List<CurrencyAmountPair> toTake)
+    public bool TryTakeCurrencies(IList<CurrencyAmountPair> toTake)
     {
         foreach (CurrencyAmountPair pair in toTake)
         {
