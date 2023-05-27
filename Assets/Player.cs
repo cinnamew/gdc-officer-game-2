@@ -36,7 +36,7 @@ public class Player : NetworkBehaviour
         int slot = Int32.Parse(context.action.name.Substring(4));
         GameObject item = character.GetComponent<Inventory>().items[slot-1];
         if (item != null) {
-            character.EquipItem(item);
+            character.EquipItem(item.GetComponent<NetworkIdentity>().netId);
         }
     }
 
@@ -93,7 +93,7 @@ public class Player : NetworkBehaviour
             }
             ui.UpdateHealth(character.GetComponent<Health>().health);
             ui.UpdateCurrency(character.GetComponent<Inventory>().currenciesHeld);
-            ui.UpdateHotbar(character.GetComponent<Inventory>().items, character.equippedItem);
+            ui.UpdateHotbar(character.GetComponent<Inventory>().items, character.equippedItem == 0 ? null : NetworkClient.spawned[character.equippedItem].gameObject);
         }
     }
 }

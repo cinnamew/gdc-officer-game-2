@@ -12,7 +12,7 @@ public class Character : NetworkBehaviour
 
     [SerializeField]
     Transform equipTransform;
-    [SyncVar(hook = nameof(OnEquippedChanged))] public GameObject equippedItem = null;
+    [SyncVar(hook = nameof(OnEquippedChanged))] public uint equippedItem = 0;
 
     new Rigidbody rigidbody;
 
@@ -66,13 +66,13 @@ public class Character : NetworkBehaviour
 
     [Server]
     public void UnequipItem() {
-        equippedItem = null;
+        equippedItem = 0;
     }
 
     [Command]
-    public void EquipItem(GameObject item) {
-        GameObject prevEquipped = equippedItem;
-        if (equippedItem) {
+    public void EquipItem(uint item) {
+        ulong prevEquipped = equippedItem;
+        if (equippedItem != 0) {
             UnequipItem();
             if (item == prevEquipped) {
                 // allows unequipping of everything
@@ -80,16 +80,21 @@ public class Character : NetworkBehaviour
             }
         }
         equippedItem = item;
-        item.GetComponent<NetworkIdentity>().AssignClientAuthority(GetComponent<Player>().connectionToClient);
+        NetworkServer.spawned[item].AssignClientAuthority(GetComponent<Player>().connectionToClient);
     }
 
-    void OnEquippedChanged(GameObject oldEquipped, GameObject newEquipped) {
-        if (oldEquipped != null) {
+    IEnumerator OnEquippedChangedCoroutine(uint oldEquippedId, uint newEquippedId) {
+        Dictionary<uint, NetworkIdentity> spawned = isClient ? NetworkClient.spawned : NetworkServer.spawned;
+        if (oldEquippedId != 0) {
+            while (!spawned.ContainsKey(oldEquippedId)) yield return null;
+            GameObject oldEquipped = spawned[oldEquippedId].gameObject;
             oldEquipped.SetActive(false);
         }
-        if (newEquipped != null) {
+        if (newEquippedId != 0) {
+            while (!spawned.ContainsKey(newEquippedId)) yield return null;
+            GameObject newEquipped = spawned[newEquippedId].gameObject;
             newEquipped.SetActive(true);
-
+            
             newEquipped.transform.SetParent(equipTransform, false);
 
             Item itemComp = newEquipped.GetComponent<Item>();
@@ -102,5 +107,9 @@ public class Character : NetworkBehaviour
                 }
             }
         }
+    }
+
+    void OnEquippedChanged(uint oldEquippedId, uint newEquippedId) {
+        StartCoroutine(OnEquippedChangedCoroutine(oldEquippedId, newEquippedId));
     }
 }
