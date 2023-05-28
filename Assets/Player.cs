@@ -3,11 +3,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using Mirror;
 
-public class Player : MonoBehaviour
+public class Player : NetworkBehaviour
 {
-    public Character character;
-    public Inventory inventory;
+    [SyncVar] public Character character;
+    [SerializeField] GameObject uiAsset;
     public UIManager ui;
 
     public List<InputAction> hotbarBindings;
@@ -15,22 +16,31 @@ public class Player : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        for (int i = 1; i <= 9; ++i) {
-            InputAction action = new InputAction("Slot" + i, InputActionType.Button, "<Keyboard>/" + i);
-            action.performed += TryEquip;
-            action.Enable();
-            hotbarBindings.Add(action);
+        if (isLocalPlayer) {
+            GameObject uiPrefab = Instantiate(uiAsset);
+            ui = uiPrefab.GetComponent<UIManager>();
+            for (int i = 1; i <= 9; ++i) {
+                InputAction action = new InputAction("Slot" + i, InputActionType.Button, "<Keyboard>/" + i);
+                action.performed += TryEquip;
+                action.Enable();
+                hotbarBindings.Add(action);
+            }
+            Cursor.lockState = CursorLockMode.Locked;
         }
-        Cursor.lockState = CursorLockMode.Locked;
     }
 
+
+    [Client]
     private void TryEquip(InputAction.CallbackContext context)
     {
         int slot = Int32.Parse(context.action.name.Substring(4));
-        if (inventory != null) {
-            GameObject item = inventory.items[slot-1];
-            if (item != null) {
-                character.EquipItem(item);
+        GameObject item = character.GetComponent<Inventory>().items[slot-1];
+        if (item != null) {
+            character.EquipItem(item.GetComponent<NetworkIdentity>().netId);
+            
+            PlayerInput input = item.GetComponent<PlayerInput>();
+            if (input != null) {
+                input.enabled = true;
             }
         }
     }
@@ -51,19 +61,30 @@ public class Player : MonoBehaviour
         return interaction;
     }
 
+    [Client]
     public void OnInteract(InputAction.CallbackContext context) {
+        if (!isLocalPlayer) return;
         if (context.phase != InputActionPhase.Canceled) {
             return;
         }
         Interaction interaction = CheckInteraction(character.cameraTransform);
         if (interaction) {
-            interaction.interacted.Invoke(this);
+            interaction.Interact();
         }
     }
+
+    /*[TargetRpc]
+    void ReplicateHealth(float health) {
+        ui.UpdateHealth(health);
+    }*/
 
     // Update is called once per frame
     void Update()
     {
+        /*if (isServer) {
+            ReplicateHealth(character.GetComponent<Health>().health);
+        }*/
+        if (!isLocalPlayer) return;
         if (character != null)
         {
             Interaction interaction = CheckInteraction(character.cameraTransform);
@@ -76,11 +97,8 @@ public class Player : MonoBehaviour
                 ui.UpdateInteractionTooltip(interaction.InteractionText);
             }
             ui.UpdateHealth(character.GetComponent<Health>().health);
-        }
-        if (inventory != null)
-        {
-            ui.UpdateCurrency(inventory.currenciesHeld);
-            ui.UpdateHotbar(inventory.items, character.equippedItem);
+            ui.UpdateCurrency(character.GetComponent<Inventory>().currenciesHeld);
+            ui.UpdateHotbar(character.GetComponent<Inventory>().items, character.equippedItem == 0 ? null : NetworkClient.spawned[character.equippedItem].gameObject);
         }
     }
 }

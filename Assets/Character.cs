@@ -2,8 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using Mirror;
 
-public class Character : MonoBehaviour
+public class Character : NetworkBehaviour
 {
     // Reference to camera transform
     [SerializeField]
@@ -11,7 +12,7 @@ public class Character : MonoBehaviour
 
     [SerializeField]
     Transform equipTransform;
-    public GameObject equippedItem = null;
+    [SyncVar(hook = nameof(OnEquippedChanged))] public uint equippedItem = 0;
 
     new Rigidbody rigidbody;
 
@@ -28,52 +29,94 @@ public class Character : MonoBehaviour
     void Start()
     {
         rigidbody = GetComponent<Rigidbody>();
+        if (!isLocalPlayer) {
+            cameraTransform.gameObject.SetActive(false);
+        }
     }
 
     // Update is called once per frame
     void Update()
     {
-        Vector3 moveDir = transform.TransformVector(inputDir); // transform the relative input direction to world space
-        moveDir.y = 0; // shouldnt be necessary as long as the character doesn't rotate pitch-wise anyway but just incase
-        moveDir.Normalize();
+        if (isLocalPlayer) {
+            Vector3 moveDir = transform.TransformVector(inputDir); // transform the relative input direction to world space
+            moveDir.y = 0; // shouldnt be necessary as long as the character doesn't rotate pitch-wise anyway but just incase
+            moveDir.Normalize();
 
-        rigidbody.velocity = moveDir * walkSpeed + rigidbody.velocity.y * Vector3.up;
+            rigidbody.velocity = moveDir * walkSpeed + rigidbody.velocity.y * Vector3.up;
+        }
         cameraTransform.localRotation = Quaternion.Euler(lookAngle.y, 0, 0);
         transform.rotation = Quaternion.Euler(0, lookAngle.x, 0);
     }
 
     // note: this component is attached to the same transform/gameobject as the character hitbox
+    [Client]
     public void OnMove(InputAction.CallbackContext context)
     {
+        if (!isLocalPlayer) return;
         Vector2 inputDir2D = context.ReadValue<Vector2>();
         inputDir = new Vector3(inputDir2D.x, 0, inputDir2D.y);
     }
 
+    // Command & ClientRpc needed to get around not being able to set syncdirection per syncvar...
+    // Sync character rotation state (note: no interpolation performed)
+    [Command]
+    void ReplicateTurn(Vector2 newLook) {
+        ReceiveTurn(newLook);
+    }
+    [ClientRpc(includeOwner = false)]
+    void ReceiveTurn(Vector2 newLook) {
+        lookAngle = newLook;
+    }
+
+    [Client]
     public void OnTurn(InputAction.CallbackContext context)
     {
+        if (!isLocalPlayer) return;
         Vector2 turnDir = context.ReadValue<Vector2>();
         lookAngle.x = (lookAngle.x + turnDir.x * Time.deltaTime * turnSpeed) % 360.0f;
         lookAngle.y = Mathf.Clamp(lookAngle.y - turnDir.y * Time.deltaTime * turnSpeed, MIN_PITCH, MAX_PITCH);
+        ReplicateTurn(lookAngle);
     }
 
+    [Server]
     public void UnequipItem() {
-        equippedItem.SetActive(false);
-        equippedItem = null;
+        equippedItem = 0;
     }
 
-    public void EquipItem(GameObject item) {
-        GameObject prevEquipped = equippedItem;
-        if (equippedItem) {
+    [Command]
+    public void EquipItem(uint item) {
+        ulong prevEquipped = equippedItem;
+        if (equippedItem != 0) {
             UnequipItem();
             if (item == prevEquipped) {
                 // allows unequipping of everything
                 return;
             }
         }
-        Item itemComp = item.GetComponent<Item>();
-        item.transform.SetParent(equipTransform, false);
-        itemComp.owner = this;
-        item.SetActive(true);
         equippedItem = item;
+        NetworkServer.spawned[item].AssignClientAuthority(GetComponent<Player>().connectionToClient);
+    }
+
+    IEnumerator OnEquippedChangedCoroutine(uint oldEquippedId, uint newEquippedId) {
+        Dictionary<uint, NetworkIdentity> spawned = isClient ? NetworkClient.spawned : NetworkServer.spawned;
+        if (oldEquippedId != 0) {
+            while (!spawned.ContainsKey(oldEquippedId)) yield return null;
+            GameObject oldEquipped = spawned[oldEquippedId].gameObject;
+            oldEquipped.SetActive(false);
+        }
+        if (newEquippedId != 0) {
+            while (!spawned.ContainsKey(newEquippedId)) yield return null;
+            GameObject newEquipped = spawned[newEquippedId].gameObject;
+            newEquipped.SetActive(true);
+            
+            newEquipped.transform.SetParent(equipTransform, false);
+
+            Item itemComp = newEquipped.GetComponent<Item>();
+            itemComp.owner = this;
+        }
+    }
+
+    void OnEquippedChanged(uint oldEquippedId, uint newEquippedId) {
+        StartCoroutine(OnEquippedChangedCoroutine(oldEquippedId, newEquippedId));
     }
 }

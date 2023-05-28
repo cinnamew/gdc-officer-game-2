@@ -2,8 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using Mirror;
 
-public class Bow : MonoBehaviour
+public class Bow : NetworkBehaviour
 {
     [SerializeField]
     GameObject arrowAsset;
@@ -15,12 +16,19 @@ public class Bow : MonoBehaviour
         item = GetComponent<Item>();
     }
 
+    [Command]
+    void ShootArrow(Vector3 direction) {
+        GameObject arrow = Instantiate(arrowAsset, item.owner.cameraTransform.position, Quaternion.identity); // rotation will be set by arrow component anyway
+        NetworkServer.Spawn(arrow);
+
+        Arrow arrowComp = arrow.GetComponent<Arrow>();
+        arrowComp.initialVelocity = direction * arrowLaunchSpeed;
+    }
+
     public void OnPrimaryUse(InputAction.CallbackContext context)
     {
         if (context.phase == InputActionPhase.Started) {
-            GameObject arrow = Instantiate(arrowAsset, item.owner.cameraTransform.position, Quaternion.identity); // rotation will be set by arrow component anyway
-            Arrow arrowComp = arrow.GetComponent<Arrow>();
-            arrowComp.velocity = item.owner.cameraTransform.forward * arrowLaunchSpeed;
+            ShootArrow(Camera.main.transform.forward);
         }
     }
 }

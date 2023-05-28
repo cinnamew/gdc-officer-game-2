@@ -79,10 +79,14 @@ public class UIManager : MonoBehaviour
         }
         GameObject item;
         if (itemsToRender.TryDequeue(out item)) {
-            renderClone = Object.Instantiate(item, Vector3.zero, Quaternion.identity);
+            Item itemComp = item.GetComponent<Item>();
+            renderClone = Object.Instantiate(itemComp.visualObj, Vector3.zero, Quaternion.identity);
             SetLayerRecursively(renderClone, LayerMask.NameToLayer("ThumbnailRender"));
             beingRendered = item;
 
+            if (itemComp.thumbnailCameraPosition) {
+                thumbnailCamera.transform.SetPositionAndRotation(itemComp.thumbnailCameraPosition.position, itemComp.thumbnailCameraPosition.rotation);
+            }
             RenderTexture.active = thumbnailRenderTexture;
             thumbnailCamera.Render();
         }
@@ -98,13 +102,13 @@ public class UIManager : MonoBehaviour
         interactTooltip.text = "";
     }
 
-    public void UpdateCurrency(Dictionary<CurrencyType, int> amounts)
+    public void UpdateCurrency(IDictionary<CurrencyType, int> amounts)
     {
         currencyRegular.text = amounts[CurrencyType.Regular].ToString();
         currencyPremium.text = amounts[CurrencyType.Premium].ToString();
     }
 
-    public void UpdateHotbar(List<GameObject> items, GameObject equippedItem)
+    public void UpdateHotbar(IList<GameObject> items, GameObject equippedItem)
     {
         foreach (GameObject item in items)
         {

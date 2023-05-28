@@ -2,8 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using Mirror;
 
-public class Interaction : MonoBehaviour
+public class Interaction : NetworkBehaviour
 {
     [SerializeField]
     public string InteractionText;
@@ -16,8 +17,10 @@ public class Interaction : MonoBehaviour
             interacted = new UnityEvent<Player>();
         }
     }
-    public void Interact(Player player)
+
+    [Command(requiresAuthority = false)]
+    public void Interact(NetworkConnectionToClient sender = null)
     {
-        interacted.Invoke(player);
+        interacted.Invoke(sender.identity.GetComponent<Player>());
     }
 }

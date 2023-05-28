@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using Mirror;
 
 public class ShopItem : MonoBehaviour
 {
@@ -27,12 +28,13 @@ public class ShopItem : MonoBehaviour
 
     void AttemptPurchase(Player player)
     {
-        if (player.inventory.TryTakeCurrencies(costs))
+        if (player.GetComponent<Inventory>().TryTakeCurrencies(costs))
         {
             onPurchase.Invoke();
             if (itemToPurchase != null) {
                 GameObject item = Instantiate(itemToPurchase);
-                player.inventory.items.Add(item);
+                NetworkServer.Spawn(item, player.connectionToClient);
+                player.GetComponent<Inventory>().items.Add(item);
             }
         }
     }
