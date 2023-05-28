@@ -37,6 +37,11 @@ public class Player : NetworkBehaviour
         GameObject item = character.GetComponent<Inventory>().items[slot-1];
         if (item != null) {
             character.EquipItem(item.GetComponent<NetworkIdentity>().netId);
+            
+            PlayerInput input = item.GetComponent<PlayerInput>();
+            if (input != null) {
+                input.enabled = true;
+            }
         }
     }
 

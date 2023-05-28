@@ -37,11 +37,13 @@ public class Character : NetworkBehaviour
     // Update is called once per frame
     void Update()
     {
-        Vector3 moveDir = transform.TransformVector(inputDir); // transform the relative input direction to world space
-        moveDir.y = 0; // shouldnt be necessary as long as the character doesn't rotate pitch-wise anyway but just incase
-        moveDir.Normalize();
+        if (isLocalPlayer) {
+            Vector3 moveDir = transform.TransformVector(inputDir); // transform the relative input direction to world space
+            moveDir.y = 0; // shouldnt be necessary as long as the character doesn't rotate pitch-wise anyway but just incase
+            moveDir.Normalize();
 
-        rigidbody.velocity = moveDir * walkSpeed + rigidbody.velocity.y * Vector3.up;
+            rigidbody.velocity = moveDir * walkSpeed + rigidbody.velocity.y * Vector3.up;
+        }
         cameraTransform.localRotation = Quaternion.Euler(lookAngle.y, 0, 0);
         transform.rotation = Quaternion.Euler(0, lookAngle.x, 0);
     }
@@ -55,6 +57,17 @@ public class Character : NetworkBehaviour
         inputDir = new Vector3(inputDir2D.x, 0, inputDir2D.y);
     }
 
+    // Command & ClientRpc needed to get around not being able to set syncdirection per syncvar...
+    // Sync character rotation state (note: no interpolation performed)
+    [Command]
+    void ReplicateTurn(Vector2 newLook) {
+        ReceiveTurn(newLook);
+    }
+    [ClientRpc(includeOwner = false)]
+    void ReceiveTurn(Vector2 newLook) {
+        lookAngle = newLook;
+    }
+
     [Client]
     public void OnTurn(InputAction.CallbackContext context)
     {
@@ -62,6 +75,7 @@ public class Character : NetworkBehaviour
         Vector2 turnDir = context.ReadValue<Vector2>();
         lookAngle.x = (lookAngle.x + turnDir.x * Time.deltaTime * turnSpeed) % 360.0f;
         lookAngle.y = Mathf.Clamp(lookAngle.y - turnDir.y * Time.deltaTime * turnSpeed, MIN_PITCH, MAX_PITCH);
+        ReplicateTurn(lookAngle);
     }
 
     [Server]
@@ -99,13 +113,6 @@ public class Character : NetworkBehaviour
 
             Item itemComp = newEquipped.GetComponent<Item>();
             itemComp.owner = this;
-            if (!isLocalPlayer) {
-                // prevent our player from trying to perform input on items that arent ours
-                PlayerInput input = newEquipped.GetComponent<PlayerInput>();
-                if (input != null) {
-                    input.enabled = false;
-                }
-            }
         }
     }
 

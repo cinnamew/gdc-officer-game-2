@@ -79,10 +79,14 @@ public class UIManager : MonoBehaviour
         }
         GameObject item;
         if (itemsToRender.TryDequeue(out item)) {
-            renderClone = Object.Instantiate(item.GetComponent<Item>().visualObj, Vector3.zero, Quaternion.identity);
+            Item itemComp = item.GetComponent<Item>();
+            renderClone = Object.Instantiate(itemComp.visualObj, Vector3.zero, Quaternion.identity);
             SetLayerRecursively(renderClone, LayerMask.NameToLayer("ThumbnailRender"));
             beingRendered = item;
 
+            if (itemComp.thumbnailCameraPosition) {
+                thumbnailCamera.transform.SetPositionAndRotation(itemComp.thumbnailCameraPosition.position, itemComp.thumbnailCameraPosition.rotation);
+            }
             RenderTexture.active = thumbnailRenderTexture;
             thumbnailCamera.Render();
         }
