@@ -26,7 +26,7 @@ public class ShopItem : MonoBehaviour
         onPurchase = new UnityEvent();
     }
 
-    void AttemptPurchase(Player player)
+    void AttemptPurchase(Character player)
     {
         if (player.GetComponent<Inventory>().TryTakeCurrencies(costs))
         {

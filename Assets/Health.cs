@@ -13,7 +13,7 @@ public class Health : NetworkBehaviour
     
     public float armor = 0.0f;
     float lastDamaged = 0.0f;
-    bool dead = false;
+    public bool dead = false;
 
     public void TakeDamage(float delta) {
         health = Mathf.Max(health - delta * (1.0f - armor), 0.0f);

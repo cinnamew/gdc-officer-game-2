@@ -12,7 +12,7 @@ EditorBuildSettings:
     path: Assets/Scenes/TestScene.unity
     guid: ee0ac05aa1fa63147aac16d0ee95f893
   - enabled: 1
-    path: Assets/Scenes/Main Scene.unity
-    guid: ff3329488f263ea4bbe45c9dd0712ec1
+    path: Assets/Scenes/BridgeMap.unity
+    guid: 6379a3552e1e3f849ad6241382256beb
   m_configObjects:
     com.unity.input.settings: {fileID: 11400000, guid: e50156cdaf6259048b07809c9c9e3104, type: 2}
